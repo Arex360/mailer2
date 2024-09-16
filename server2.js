@@ -39,8 +39,8 @@ function saveBase64Image(base64Data, filename) {
     return imagePath;
 }
 
-// Store image view status in a JSON file
-function storeImageStatus(hash, viewed = false) {
+// Store image view status (number of views) in a JSON file
+function storeImageStatus(hash) {
     const statusFilePath = path.join(__dirname, 'imageStatus.json');
     let imageStatus = {};
 
@@ -50,20 +50,24 @@ function storeImageStatus(hash, viewed = false) {
         imageStatus = JSON.parse(rawData);
     }
 
-    // Update the status for the image
-    imageStatus[hash] = viewed;
+    // Initialize or increment the view count for the image
+    if (!imageStatus[hash]) {
+        imageStatus[hash] = { views: 0 };
+    }
+    imageStatus[hash].views += 1;
+
     fs.writeFileSync(statusFilePath, JSON.stringify(imageStatus, null, 2));
 }
 
-// Retrieve image view status
+// Retrieve the number of views for an image
 function getImageStatus(hash) {
     const statusFilePath = path.join(__dirname, 'imageStatus.json');
     if (fs.existsSync(statusFilePath)) {
         const rawData = fs.readFileSync(statusFilePath);
         const imageStatus = JSON.parse(rawData);
-        return imageStatus[hash] || false; // Default to false if no record exists
+        return imageStatus[hash] ? imageStatus[hash].views : 0; // Default to 0 views if no record exists
     }
-    return false;
+    return 0;
 }
 
 // Email route
@@ -80,8 +84,8 @@ app.post('/sendemail', async (req, res) => {
     // Save the image to the images folder
     saveBase64Image(base64Image, hash);
 
-    // Store the image's view status as "not viewed"
-    storeImageStatus(hash, false);
+    // Initialize the view count to 0 (not viewed yet)
+    storeImageStatus(hash);
 
     let htmlBody = `
     <!DOCTYPE html>
@@ -118,7 +122,7 @@ app.post('/sendemail', async (req, res) => {
             html: htmlBody, // HTML body
         });
         console.log("sent mail");
-        res.status(200).send('Email sent successfully: '+hash);
+        res.status(200).send('Email sent successfully');
     } catch (error) {
         console.log("error", error);
         res.status(500).send('Error sending email');
@@ -131,8 +135,8 @@ app.get('/getimg/:hash', (req, res) => {
     const imagePath = path.join(imagesFolder, `${hash}.png`);
 
     if (fs.existsSync(imagePath)) {
-        // Update the status to "viewed"
-        storeImageStatus(hash, true);
+        // Increment the view count
+        storeImageStatus(hash);
 
         res.sendFile(imagePath);
     } else {
@@ -140,12 +144,12 @@ app.get('/getimg/:hash', (req, res) => {
     }
 });
 
-// Route to check if the image has been viewed
+// Route to check how many times the image has been viewed
 app.get('/check/hash/:hash', (req, res) => {
     const hash = req.params.hash;
-    const viewed = getImageStatus(hash);
+    const views = getImageStatus(hash);
 
-    res.json({ hash, viewed });
+    res.json({ hash, views });
 });
 
 // Create HTTPS server
