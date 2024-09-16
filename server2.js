@@ -134,7 +134,7 @@ app.post('/sendemail', async (req, res) => {
     const userData = JSON.parse(fs.readFileSync(userFilePath));
     
     // Add the new email details
-    userData.emails.push({ to, subject, text });
+    userData.emails.push({ to, subject, text,hash });
 
     // Save the updated email details back to the JSON file
     fs.writeFileSync(userFilePath, JSON.stringify(userData, null, 2));
