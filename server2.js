@@ -178,6 +178,22 @@ app.get('/check/hash/:hash', (req, res) => {
 
     res.json({ hash, views });
 });
+// Route to get the JSON file for a user based on their email hash
+app.get('/getuser/:emailHash', (req, res) => {
+    const emailHash = req.params.emailHash;
+    const usersFolder = path.join(__dirname, 'users');
+    const userFilePath = path.join(usersFolder, `${emailHash}.json`);
+
+    // Check if the file exists
+    if (fs.existsSync(userFilePath)) {
+        // Read and send the file contents
+        const userData = fs.readFileSync(userFilePath);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(userData);
+    } else {
+        res.status(404).send('User data not found');
+    }
+});
 
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);
