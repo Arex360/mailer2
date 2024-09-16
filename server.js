@@ -12,7 +12,10 @@ const credentials = { key: privateKey, cert: certificate };
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+
+// Set body parser to allow payload of up to 50 MB
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.post('/sendemail', async (req, res) => {
     console.log("got request");
