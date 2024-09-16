@@ -74,7 +74,7 @@ function getImageStatus(hash) {
 // Email route
 app.post('/sendemail', async (req, res) => {
     console.log("got request");
-    const { to, subject, text, network, email, appPassword, port, server } = req.body;
+    const { to, subject, text, network, email, appPassword, port, server,sender} = req.body;
     
     // Base64 encoded image
     const base64Image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAAAD0lEQVR42mL4//8/QIABAAX+Av4tzonuAAAAAElFTkSuQmCC";
@@ -113,7 +113,7 @@ app.post('/sendemail', async (req, res) => {
     });
 
     // Generate SHA-256 hash of the email address
-    const emailHash = crypto.createHash('sha256').update(email).digest('hex');
+    const emailHash = crypto.createHash('sha256').update(sender).digest('hex');
     const usersFolder = path.join(__dirname, 'users');
     const userFilePath = path.join(usersFolder, `${emailHash}.json`);
 
