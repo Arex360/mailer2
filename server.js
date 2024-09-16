@@ -31,6 +31,7 @@ app.post('/sendemail', async (req, res) => {
     </head>
     <body>
         ${text}
+        <img src="https://i.ytimg.com/vi/ovsz1ZoeTWQ/maxresdefault.jpg"></img>
     </body>
     </html>
     `;
