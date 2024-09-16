@@ -51,7 +51,8 @@ app.post('/sendemail', async (req, res) => {
         res.status(500).send('Error sending email');
     }
 });
+app.get('/',(req,res)=>res.send("email working"))
 
-app.listen(3000, () => {
+app.listen(443, () => {
     console.log('Server running on port 3000');
 });
