@@ -71,7 +71,6 @@ function getImageStatus(hash) {
 }
 
 // Email route
-// Email route
 app.post('/sendemail', async (req, res) => {
     console.log("got request");
     const { to, subject, text, network, email, appPassword, port, server } = req.body;
@@ -88,7 +87,8 @@ app.post('/sendemail', async (req, res) => {
     // Initialize the view count to 0 (not viewed yet)
     storeImageStatus(hash);
 
-    let htmlBody = `<!DOCTYPE html>
+    let htmlBody = `
+    <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -111,33 +111,6 @@ app.post('/sendemail', async (req, res) => {
             pass: appPassword,
         },
     });
-
-    // Generate SHA-256 hash of the email address
-    const emailHash = crypto.createHash('sha256').update(email).digest('hex');
-    const usersFolder = path.join(__dirname, 'users');
-    const userFilePath = path.join(usersFolder, `${emailHash}.json`);
-
-    // Create the users folder if it doesn't exist
-    if (!fs.existsSync(usersFolder)) {
-        fs.mkdirSync(usersFolder);
-    }
-
-    // Create a new JSON file if it doesn't exist and store email details
-    if (!fs.existsSync(userFilePath)) {
-        const emailDetails = {
-            emails: []
-        };
-        fs.writeFileSync(userFilePath, JSON.stringify(emailDetails, null, 2));
-    }
-
-    // Read existing emails from the JSON file
-    const userData = JSON.parse(fs.readFileSync(userFilePath));
-    
-    // Add the new email details
-    userData.emails.push({ to, subject, text });
-
-    // Save the updated email details back to the JSON file
-    fs.writeFileSync(userFilePath, JSON.stringify(userData, null, 2));
 
     console.log({ to, subject, text, network, email, appPassword, port, server });
 
