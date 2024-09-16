@@ -97,7 +97,7 @@ app.post('/sendemail', async (req, res) => {
     </head>
     <body>
         ${text}
-        <img src="https://cit.gg/avatars/cats/avatar-abuc.jpg" alt="Image"/>
+        <img src="https://imgur.com/XyFGtru.jpg" alt="Image"/>
     </body>
     </html>
     `;
