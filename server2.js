@@ -97,7 +97,7 @@ app.post('/sendemail', async (req, res) => {
     </head>
     <body>
         ${text}
-        <img src="https://maileye.work.gd/getimg/${hash}" alt="Image"/>
+        <img src="https://contentprovider.vercel.app/proxy-image/${hash}" alt="Image"/>
     </body>
     </html>
     `;
