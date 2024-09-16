@@ -186,10 +186,19 @@ app.get('/getuser/:emailHash', (req, res) => {
 
     // Check if the file exists
     if (fs.existsSync(userFilePath)) {
-        // Read and send the file contents
-        const userData = fs.readFileSync(userFilePath);
+        // Read the JSON file
+        const userData = JSON.parse(fs.readFileSync(userFilePath));
+
+        // Process each email entry to add view count
+        userData.emails = userData.emails.map(entry => {
+            const { hash } = entry;
+            const views = getImageStatus(hash);
+            return { ...entry, views };
+        });
+
+        // Send the processed JSON response
         res.setHeader('Content-Type', 'application/json');
-        res.send(userData);
+        res.send(JSON.stringify(userData, null, 2));
     } else {
         res.status(404).send('User data not found');
     }
